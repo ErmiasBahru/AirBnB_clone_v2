@@ -45,7 +45,7 @@ class HBNBCommand(cmd.Cmd):
         _cmd = _cls = _id = _args = ''  # initialize line elements
 
         # scan for general formating - i.e '.', '(', ')'
-        if not ('.' in line and '(' in line and ')' in line):
+        if '.' not in line or '(' not in line or ')' not in line:
             return line
 
         try:  # parse line left to right
@@ -72,14 +72,14 @@ class HBNBCommand(cmd.Cmd):
 
                 # if arguments exist beyond _id
                 pline = pline[2].strip()  # pline is now str
-                if pline:
-                    # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+            if pline:
+                # check for *args or **kwargs
+                if pline[0] is '{' and pline[-1] is'}'\
                             and type(eval(pline)) is dict:
-                        _args = pline
-                    else:
-                        _args = pline.replace(',', '')
-                        # _args = _args.replace('\"', '')
+                    _args = pline
+                else:
+                    _args = pline.replace(',', '')
+                    # _args = _args.replace('\"', '')
             line = ' '.join([_cmd, _cls, _id, _args])
 
         except Exception as mess:
@@ -168,7 +168,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = c_name + "." + c_id
+        key = f"{c_name}.{c_id}"
         try:
             print(storage._FileStorage__objects[key])
         except KeyError:
@@ -199,7 +199,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = c_name + "." + c_id
+        key = f"{c_name}.{c_id}"
 
         try:
             del(storage.all()[key])
@@ -221,11 +221,9 @@ class HBNBCommand(cmd.Cmd):
                 print("** class doesn't exist **")
                 return
             objs = storage.all(args)
-            for key in objs:
-                print_list.append(objs[key].__str__())
+            print_list.extend(objs[key].__str__() for key in objs)
         else:
-            for k, v in storage.all().items():
-                print_list.append(str(v))
+            print_list.extend(str(v) for k, v in storage.all().items())
         print(print_list)
 
     def help_all(self):
@@ -235,10 +233,10 @@ class HBNBCommand(cmd.Cmd):
 
     def do_count(self, args):
         """Count current number of class instances"""
-        count = 0
-        for k, v in storage._FileStorage__objects.items():
-            if args == k.split('.')[0]:
-                count += 1
+        count = sum(
+            args == k.split('.')[0]
+            for k, v in storage._FileStorage__objects.items()
+        )
         print(count)
 
     def help_count(self):
@@ -269,7 +267,7 @@ class HBNBCommand(cmd.Cmd):
             return
 
         # generate key from class and id
-        key = c_name + "." + c_id
+        key = f"{c_name}.{c_id}"
 
         # determine if key is present
         if key not in storage.all():
@@ -281,8 +279,7 @@ class HBNBCommand(cmd.Cmd):
             kwargs = eval(args[2])
             args = []  # reformat kwargs into list, ex: [<name>, <value>, ...]
             for k, v in kwargs.items():
-                args.append(k)
-                args.append(v)
+                args.extend((k, v))
         else:  # isolate args
             args = args[2]
             if args and args[0] is '\"':  # check for quoted arg

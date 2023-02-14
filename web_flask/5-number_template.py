@@ -34,20 +34,20 @@ def hbnb():
 @app.route('/c/<string:text>')
 def c_route(text):
     # displays "C + text"
-    return "C {}".format(text.replace("_", " "))
+    return f'C {text.replace("_", " ")}'
 
 
 @app.route('/python')
 @app.route('/python/<string:text>')
 def python_route(text='is cool'):
     # displays "Python + text"
-    return "Python {}".format(text.replace("_", " "))
+    return f'Python {text.replace("_", " ")}'
 
 
 @app.route('/number/<int:n>')
 def number_route(n):
     # display “n is a number” only if n is an integer
-    return '{} is a number'.format(n)
+    return f'{n} is a number'
 
 
 @app.route('/number_template/<int:n>')

@@ -31,14 +31,14 @@ def hbnb():
 @app.route('/c/<string:text>')
 def c_route(text):
     # displays "C + text"
-    return "C {}".format(text.replace("_", " "))
+    return f'C {text.replace("_", " ")}'
 
 
 @app.route('/python')
 @app.route('/python/<string:text>')
 def python_route(text='is cool'):
     # displays "Python + text"
-    return "Python {}".format(text.replace("_", " "))
+    return f'Python {text.replace("_", " ")}'
 
 
 if __name__ == "__main__":
