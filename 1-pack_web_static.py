@@ -12,12 +12,12 @@ from os.path import isdir
 def do_pack():
     """ Creates a .tgz archive from web_static folder"""
     string_date = datetime.now().strftime("%Y%m%d%H%M%S")
-    archive = "versions/web_static_{}.tgz".format(string_date)
+    archive = f"versions/web_static_{string_date}.tgz"
 
     try:
         if not isdir('versions'):
             local("mkdir versions")
-        local("tar -cvzf {} web_static".format(archive))
+        local(f"tar -cvzf {archive} web_static")
         return archive
     except:
         return None

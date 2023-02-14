@@ -29,16 +29,12 @@ def states_cities_route():
     states = storage.all(State)
     amenities = storage.all(Amenity)
     all_states = []
-    all_amenities = []
-
     for state in states.values():
         cities = state.cities
         cities_list = list(filter(lambda x: x.state_id == state.id, cities))
         c_data = list(map(lambda x: [x.id, x.name], cities_list))
         all_states.append([state.id, state.name, c_data])
-    for amenity in amenities.values():
-        all_amenities.append([amenity.id, amenity.name])
-
+    all_amenities = [[amenity.id, amenity.name] for amenity in amenities.values()]
     return render_template("10-hbnb_filters.html", states=all_states,
                            amenities=all_amenities
                            )

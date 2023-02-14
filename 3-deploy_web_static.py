@@ -14,12 +14,12 @@ env.hosts = ['3.227.3.77', '3.235.226.255']
 def do_pack():
     """ Creates a .tgz archive from web_static folder"""
     string_date = datetime.now().strftime("%Y%m%d%H%M%S")
-    archive = "versions/web_static_{}.tgz".format(string_date)
+    archive = f"versions/web_static_{string_date}.tgz"
 
     try:
         if not isdir('versions'):
             local("mkdir versions")
-        local("tar -cvzf {} web_static".format(archive))
+        local(f"tar -cvzf {archive} web_static")
         return archive
     except:
         return None
@@ -34,14 +34,14 @@ def do_deploy(archive_path):
     try:
         no_ext = filename.split(".")[0]
         put(archive_path, "/tmp/")
-        extract_path = "/data/web_static/releases/{}".format(no_ext)
-        run("mkdir -p {}".format(extract_path))
-        run("tar xzf /tmp/{} -C {}".format(filename, extract_path))
-        run("rm /tmp/{}".format(filename))
+        extract_path = f"/data/web_static/releases/{no_ext}"
+        run(f"mkdir -p {extract_path}")
+        run(f"tar xzf /tmp/{filename} -C {extract_path}")
+        run(f"rm /tmp/{filename}")
         run("mv {0}/web_static/* {0}/".format(extract_path))
         run("rm -rf {0}/web_static/".format(extract_path))
         run("rm -rf /data/web_static/current")
-        run("ln -s {} /data/web_static/current".format(extract_path))
+        run(f"ln -s {extract_path} /data/web_static/current")
         return True
     except:
         return False
@@ -50,7 +50,4 @@ def do_deploy(archive_path):
 def deploy():
     """creates and distributes an archive to your web servers"""
     archive_path = do_pack()
-    if archive_path is None:
-        return False
-    has_deployed = do_deploy(archive_path)
-    return has_deployed
+    return False if archive_path is None else do_deploy(archive_path)

@@ -18,10 +18,7 @@ def close_context(exception):
 @app.route('/states_list')
 def states_route():
     states = storage.all(State)
-    all_states = []
-
-    for state in states.values():
-        all_states.append([state.id, state.name])
+    all_states = [[state.id, state.name] for state in states.values()]
     return render_template('7-states_list.html', states=all_states)
 
 

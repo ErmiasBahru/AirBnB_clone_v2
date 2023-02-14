@@ -21,15 +21,12 @@ def close_context(exception):
 def states_cities_route(id=None):
     # route that fetches all states or a certain state
     states = storage.all(State)
-    all_states = []
-
     if id is None:
-        for state in states.values():
-            all_states.append([state.id, state.name])
+        all_states = [[state.id, state.name] for state in states.values()]
         return render_template('9-states.html', states=all_states, id=id)
     else:
         state_list = list(filter(lambda x: x.id == id, states.values()))
-        state = None if len(state_list) == 0 else state_list[0]
+        state = state_list[0] if state_list else None
         city_data = None
         if state:
             cities = state.cities

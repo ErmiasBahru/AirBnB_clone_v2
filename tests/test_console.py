@@ -66,8 +66,8 @@ class TestHBNBCommand_create(unittest.TestCase):
               'City', 'State', 'Review', 'Amenity']
         for m in Mm:
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd('create {}'.format(m))
-                new_key = m + "." + f.getvalue().strip()
+                HBNBCommand().onecmd(f'create {m}')
+                new_key = f"{m}.{f.getvalue().strip()}"
                 self.assertIn(new_key, storage.all().keys())
 
 
@@ -87,7 +87,7 @@ class TestHBNBCommand_create_with_parameters(unittest.TestCase):
                     price_by_night=300 latitude=37.773972 longitude=-122.431297
                                      '''.format(m))
 
-                new_key = m + "." + f.getvalue().strip()
+                new_key = f"{m}.{f.getvalue().strip()}"
                 self.assertIn(new_key, storage.all().keys())
 
 
@@ -120,7 +120,7 @@ class TestHBNBCommand_show(unittest.TestCase):
             inst = key.split(".")
             value_str = str(value)
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd('show {} {}'.format(inst[0], inst[1]))
+                HBNBCommand().onecmd(f'show {inst[0]} {inst[1]}')
                 self.assertEqual(value_str, f.getvalue().strip())
 
 
@@ -155,12 +155,12 @@ class TestHBNBCommand_destroy(unittest.TestCase):
         for m in Mm:
             tmp = eval(m)()
             tmp.save()
-            tmp_id = m + "." + tmp.id
+            tmp_id = f"{m}.{tmp.id}"
             my_objs[tmp_id] = tmp
-        for key in my_objs.keys():
+        for key in my_objs:
             kk = key.split(".")
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd('destroy {} {}'.format(kk[0], kk[1]))
+                HBNBCommand().onecmd(f'destroy {kk[0]} {kk[1]}')
                 objs = storage.all()
                 self.assertNotIn(kk[1], objs.keys())
 
@@ -192,7 +192,7 @@ class TestHBNBCommand_all(unittest.TestCase):
               'City', 'State', 'Review', 'Amenity']
         for m in Mm:
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd('all {}'.format(m))
+                HBNBCommand().onecmd(f'all {m}')
                 for n in Mm:
                     if n != m:
                         self.assertNotIn(n, f.getvalue().strip())
@@ -224,12 +224,12 @@ class TestHBNBCommand_update(unittest.TestCase):
         for key, value in objs.items():
             kk = key.split(".")
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd('update {} {}'.format(kk[0], kk[1]))
+                HBNBCommand().onecmd(f'update {kk[0]} {kk[1]}')
                 self.assertEqual("** attribute name missing **",
                                  f.getvalue().strip())
 
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd('update {} {} id'.format(kk[0], kk[1]))
+                HBNBCommand().onecmd(f'update {kk[0]} {kk[1]} id')
                 self.assertEqual("** value missing **",
                                  f.getvalue().strip())
 
@@ -238,9 +238,8 @@ class TestHBNBCommand_update(unittest.TestCase):
         objs = storage.all()
         key = list(objs.keys())[0].split(".")
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd('update {} {} name Silvia'.format(key[0],
-                                                                   key[1]))
-            HBNBCommand().onecmd('show {} {}'.format(key[0], key[1]))
+            HBNBCommand().onecmd(f'update {key[0]} {key[1]} name Silvia')
+            HBNBCommand().onecmd(f'show {key[0]} {key[1]}')
             self.assertIn('name', f.getvalue().strip())
             self.assertIn('Silvia', f.getvalue().strip())
 

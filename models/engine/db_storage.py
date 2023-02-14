@@ -24,12 +24,10 @@ class DBStorage:
 
     def __init__(self):
         """Initializes a DBStorage instance"""
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
-                                      format(getenv("HBNB_MYSQL_USER"),
-                                             getenv("HBNB_MYSQL_PWD"),
-                                             getenv("HBNB_MYSQL_HOST"),
-                                             getenv("HBNB_MYSQL_DB")),
-                                      pool_pre_ping=True)
+        self.__engine = create_engine(
+            f'mysql+mysqldb://{getenv("HBNB_MYSQL_USER")}:{getenv("HBNB_MYSQL_PWD")}@{getenv("HBNB_MYSQL_HOST")}/{getenv("HBNB_MYSQL_DB")}',
+            pool_pre_ping=True,
+        )
         if getenv("HBNB_ENV") == 'test':
             Base.metadata.drop_all(self.__engine)
 
@@ -49,9 +47,7 @@ class DBStorage:
                 return
             objs_list = self.__session.query(cls).all()
 
-        objs_dict = {"{}.{}".format(v.__class__.__name__,
-                                    v.id): v for v in objs_list}
-        return objs_dict
+        return {f"{v.__class__.__name__}.{v.id}": v for v in objs_list}
 
     def new(self, obj):
         """add the object to the current database session"""

@@ -18,14 +18,14 @@ def do_deploy(archive_path):
     try:
         no_ext = filename.split(".")[0]
         put(archive_path, "/tmp/")
-        extract_path = "/data/web_static/releases/{}".format(no_ext)
-        run("mkdir -p {}".format(extract_path))
-        run("tar xzf /tmp/{} -C {}".format(filename, extract_path))
-        run("rm /tmp/{}".format(filename))
+        extract_path = f"/data/web_static/releases/{no_ext}"
+        run(f"mkdir -p {extract_path}")
+        run(f"tar xzf /tmp/{filename} -C {extract_path}")
+        run(f"rm /tmp/{filename}")
         run("mv {0}/web_static/* {0}/".format(extract_path))
         run("rm -rf {0}/web_static/".format(extract_path))
         run("rm -rf /data/web_static/current")
-        run("ln -s {} /data/web_static/current".format(extract_path))
+        run(f"ln -s {extract_path} /data/web_static/current")
         return True
     except:
         return False
